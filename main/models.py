@@ -38,17 +38,16 @@ class Brand(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название")
-    article_number = models.CharField(max_length=50, unique=True, verbose_name="Артикул")
+    article_number = models.CharField(max_length=50, verbose_name="Артикул", null=True, blank=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.PROTECT, related_name='products', verbose_name="Склад")
     quantity = models.PositiveIntegerField(verbose_name="Количество")
     cost_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Себестоимость", 
                                      null=True, blank=True)
     selling_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена продажи", 
                                         null=True, blank=True)
-    brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name='products', verbose_name="Бренд", 
-                              null=True, blank=True)
+    brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name='products', verbose_name="Бренд")
     country_of_origin = models.ForeignKey(Country, on_delete=models.PROTECT, related_name='products', 
-                                          verbose_name="Страна происхождения", null=True, blank=True)
+                                          verbose_name="Страна происхождения")
     suits_for = models.CharField(max_length=200, verbose_name="Подходит для", null=True, blank=True,
                                  help_text="Укажите модели автомобилей, для которых подходит эта запчасть")
 
@@ -72,9 +71,14 @@ class Arrival(models.Model):
     def __str__(self):
         return f"Arrival #{self.id} → {self.warehouse.name}"
     
+    @property
+    def total_amount(self):
+        return sum(item.quantity * item.cost_price for item in self.items.all())
+    
     class Meta:
         verbose_name = "Поступление"
         verbose_name_plural = "Поступления"
+        ordering = ['-date']
     
 
 class ArrivalProduct(models.Model):
@@ -82,18 +86,21 @@ class ArrivalProduct(models.Model):
         Arrival, on_delete=models.PROTECT, related_name='items'
     )
     name = models.CharField(max_length=100, verbose_name="Название")
-    article_number = models.CharField(max_length=50, verbose_name="Артикул")
-    quantity = models.PositiveIntegerField()
-    cost_price = models.DecimalField(max_digits=10, decimal_places=2)
+    article_number = models.CharField(max_length=50, verbose_name="Артикул", null=True, blank=True)
+    quantity = models.PositiveIntegerField(verbose_name="Количество")
+    cost_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Себестоимость",)
     # selling_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена продажи", 
     #                                     null=True, blank=True)
-    brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name='arrival_products', verbose_name="Бренд", 
-                              null=True, blank=True)
+    brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name='arrival_products', verbose_name="Бренд")
     suits_for = models.CharField(max_length=200, verbose_name="Подходит для", null=True, blank=True,
                                  help_text="Укажите модели автомобилей, для которых подходит эта запчасть")
+    
+    @property
+    def total_cost(self):
+        return self.quantity * self.cost_price
 
     def __str__(self):
-        return f"{self.article_number} × {self.quantity}"
+        return f"{self.name} × {self.quantity}"
     
     class Meta:
         verbose_name = "Товар поступления"
@@ -102,8 +109,14 @@ class ArrivalProduct(models.Model):
 
 class CurrencyRate(models.Model):
     currency_code = models.CharField(max_length=3, unique=True, verbose_name="Код валюты")
-    rate_to_usd = models.DecimalField(max_digits=10, decimal_places=4, verbose_name="Курс к USD")
+    rate_to_usd = models.DecimalField(max_digits=10, decimal_places=10, verbose_name="Курс к USD")
     last_updated = models.DateTimeField(auto_now=True, verbose_name="Последнее обновление")
+    selected = models.BooleanField(default=False, verbose_name="Выбранная валюта для админки")
+
+    def clean(self):
+        if self.selected:
+            CurrencyRate.objects.exclude(pk=self.pk).update(selected=False)
+        return super().clean()
 
     def __str__(self):
         return f"{self.currency_code}: {self.rate_to_usd}"

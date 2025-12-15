@@ -4,6 +4,8 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from .models import User
 
+from core.admin_site import admin_site
+
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
@@ -56,3 +58,5 @@ class UserAdmin(BaseUserAdmin):
             ),
         }),
     )
+
+# admin_site.register(User, UserAdmin)

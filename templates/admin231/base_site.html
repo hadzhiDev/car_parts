@@ -1,0 +1,22 @@
+{% comment %} {% extends "admin/base.html" %}
+
+{% block header %}
+{{ block.super }}
+
+<form method="get" action="" style="display:inline-block; margin-left:20px;">
+    <label style="color:white; font-weight:bold;">
+        Currency:
+        <select name="currency" onchange="this.form.submit()">
+            {% for c in currencies %}
+                <option value="{{ c.currency_code }}"
+                    {% if c.currency_code == current_currency %}
+                        selected
+                    {% endif %}
+                >
+                    {{ c.currency_code }}
+                </option>
+            {% endfor %}
+        </select>
+    </label>
+</form>
+{% endblock %} {% endcomment %}

@@ -1,12 +1,72 @@
-# @receiver(post_save, sender=Sale)
-# def update_product_quantity_on_sale(sender, instance, created, **kwargs):
-#     if created:
-#         for item in instance.items.all():
-#             product = item.product
-#             product.quantity -= item.quantity_sold
-#             product.save()
-#         print("Product quantities updated after sale.")
-#         client = instance.client
-#         total_sale_amount = sum(item.sale_price * item.quantity_sold for item in instance.items.all())
-#         client.balance -= total_sale_amount
-#         client.save()
+from django.db.models.signals import pre_save, post_save, post_delete
+from django.dispatch import receiver
+from django.db import transaction
+
+from .models import SaleItem, Payment
+
+
+@receiver(pre_save, sender=SaleItem)
+def saleitem_pre_save(sender, instance, **kwargs):
+    if not instance.pk:
+        instance._old_quantity = 0
+        instance._old_price = 0
+        return
+
+    old = SaleItem.objects.get(pk=instance.pk)
+    instance._old_quantity = old.quantity
+    instance._old_price = old.sale_price
+
+
+@receiver(post_save, sender=SaleItem)
+@transaction.atomic
+def saleitem_post_save(sender, instance, created, **kwargs):
+    product = instance.product
+    client = instance.sale.client
+
+    # 💡 разница
+    quantity_delta = instance.quantity - instance._old_quantity
+    price_delta = (instance.quantity * instance.sale_price) - (
+        instance._old_quantity * instance._old_price
+    )
+
+    # 🔻 склад
+    product.quantity -= quantity_delta
+    if product.quantity < 0:
+        product.quantity = 0
+    product.save()
+
+    # 🔻 баланс клиента (долг растёт)
+    client.balance += price_delta
+    client.save()
+
+
+
+@receiver(post_delete, sender=SaleItem)
+def saleitem_post_delete(sender, instance, **kwargs):
+    product = instance.product
+    client = instance.sale.client
+
+    # 🔺 склад
+    product.quantity += instance.quantity
+    product.save()
+
+    # 🔺 баланс клиента
+    client.balance -= instance.quantity * instance.sale_price
+    client.save()
+
+
+@receiver(post_save, sender=Payment)
+def payment_post_save(sender, instance, created, **kwargs):
+    if not created:
+        return
+
+    client = instance.client
+    client.balance -= instance.amount
+    client.save()
+
+
+@receiver(post_delete, sender=Payment)
+def payment_post_delete(sender, instance, **kwargs):
+    client = instance.client
+    client.balance += instance.amount
+    client.save()
