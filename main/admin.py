@@ -36,11 +36,18 @@ class ArrivalProductInline(admin.TabularInline):
         'article_number',
         'quantity',
         'cost_price',
+        'row_total',
         'brand',
         'suits_for',
     )
+    readonly_fields = ('row_total',)
     autocomplete_fields = ('brand',)
     can_delete = False
+
+    def row_total(self, obj):
+        print('obj.total_cost: ', obj.total_cost)
+        return "—"
+    row_total.short_description = "Итого"
 
 
 
@@ -55,6 +62,9 @@ class ArrivalAdmin(admin.ModelAdmin):
     def total_amount_converted(self, obj):
         return convert_from_usd(obj.total_amount)
     total_amount_converted.short_description = "Общая сумма"
+
+    class Media:
+        js = ('admin/arrival_totals.js',)
 
 
 @admin.register(Product)

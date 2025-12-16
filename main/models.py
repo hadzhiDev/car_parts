@@ -14,7 +14,7 @@ class Warehouse(models.Model):
 
 class Country(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название страны")
-    flag_image = models.ImageField(upload_to='country_flags/', verbose_name="Флаг страны")
+    flag_image = models.ImageField(upload_to='country_flags/', verbose_name="Флаг страны", null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -26,7 +26,7 @@ class Country(models.Model):
 
 class Brand(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название марки")
-    logo = models.ImageField(upload_to='brand_logos/', verbose_name="Логотип марки")
+    logo = models.ImageField(upload_to='brand_logos/', verbose_name="Логотип марки", null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -97,6 +97,8 @@ class ArrivalProduct(models.Model):
     
     @property
     def total_cost(self):
+        if self.quantity is None or self.cost_price is None:
+            return None
         return self.quantity * self.cost_price
 
     def __str__(self):
