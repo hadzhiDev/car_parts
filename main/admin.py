@@ -3,7 +3,10 @@ from django.utils.safestring import mark_safe
 
 from .models import Warehouse, Country, Brand, Product, Arrival, ArrivalProduct, CurrencyRate
 from .utils import convert_from_usd
-# from core.admin_site import admin_site
+
+admin.site.site_header = "Административная панель AKG HYUNDAI"
+admin.site.site_title = "AKG HYUNDAI Admin Portal"
+admin.site.index_title = "Добро пожаловать в административную панель AKG HYUNDAI"
 
 
 @admin.register(ArrivalProduct)

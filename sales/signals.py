@@ -23,19 +23,16 @@ def saleitem_post_save(sender, instance, created, **kwargs):
     product = instance.product
     client = instance.sale.client
 
-    # 💡 разница
     quantity_delta = instance.quantity - instance._old_quantity
     price_delta = (instance.quantity * instance.sale_price) - (
         instance._old_quantity * instance._old_price
     )
 
-    # 🔻 склад
     product.quantity -= quantity_delta
     if product.quantity < 0:
         product.quantity = 0
     product.save()
 
-    # 🔻 баланс клиента (долг растёт)
     client.balance += price_delta
     client.save()
 

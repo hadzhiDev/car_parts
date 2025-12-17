@@ -4,7 +4,7 @@ from .models import CurrencyRate
 
 def convert_from_usd(amount):
     selected_currency = CurrencyRate.objects.filter(selected=True).first()
-    print('selected_currency: ', selected_currency, amount)
+    # print('selected_currency: ', selected_currency, amount)
     if amount is None:
         return None
     if not selected_currency:
