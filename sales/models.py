@@ -25,8 +25,10 @@ class SaleItem(models.Model):
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена продажи")
 
     @property
-    def total_cost(self):
-        return self.quantity * self.sale_price
+    def total_cost(self): 
+        if self.sale_price and self.quantity:
+            return self.quantity * self.sale_price
+        return 0
 
     def clean(self):
         if self.pk:

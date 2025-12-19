@@ -15,7 +15,7 @@ class ArrivalProductAdmin(admin.ModelAdmin):
                     'total_cost_converted', 'brand__name', 'suits_for')
     list_display_links = ('name', 'article_number')
     search_fields = ('name', 'article_number')
-    list_filter = ('arrival__date', 'brand__name',)
+    list_filter = ('arrival__date', 'brand__name')
 
     def cost_price_converted(self, obj):
         return convert_from_usd(obj.cost_price)
@@ -119,13 +119,3 @@ class CurrencyRateAdmin(admin.ModelAdmin):
     search_fields = ('currency_code',)
     list_filter = ('last_updated',)
     list_editable = ('selected',)
-    
-
-
-# admin_site.register(CurrencyRate, CurrencyRateAdmin)
-# admin_site.register(Arrival, ArrivalAdmin)
-# admin_site.register(Product, ProductAdmin)
-# admin_site.register(ArrivalProduct, ArrivalProductAdmin)
-# admin_site.register(Warehouse, WarehouseAdmin)
-# admin_site.register(Country, CountryAdmin)
-# admin_site.register(Brand, BrandAdmin)

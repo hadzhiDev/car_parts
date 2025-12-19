@@ -7,7 +7,18 @@ from main.utils import convert_from_usd
 class SaleItemInline(admin.TabularInline):
     model = SaleItem
     extra = 1
-    raw_id_fields = ('product',)
+    autocomplete_fields = ('product',)
+    readonly_fields = ('row_total',)
+    fields = (
+        'product',
+        'quantity',
+        'sale_price',
+        'row_total',
+    )
+    def row_total(self, obj):
+        print('obj.total_cost: ', obj.total_cost)
+        return "—"
+    row_total.short_description = "Итого"
 
  
 @admin.register(Sale)
@@ -22,6 +33,9 @@ class SaleAdmin(admin.ModelAdmin):
     @admin.display(description='Общая сумма')
     def total_amount(self, obj):
         return convert_from_usd(obj.total_amount)
+    
+    class Media:
+        js = ('admin/inline_totals.js',)
 
 
 @admin.register(SaleItem)

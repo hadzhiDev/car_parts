@@ -18,9 +18,16 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.shortcuts import redirect
+
+from main.views import set_admin_currency
+from main.models import CurrencyRate
+
 
 urlpatterns = [
+    # path('admin/', lambda request: redirect('/admin/main/product/')),
     path('admin/', admin.site.urls),
+    path("set-admin-currency/", set_admin_currency, name="set_admin_currency"),
 ]
 
 if settings.DEBUG:

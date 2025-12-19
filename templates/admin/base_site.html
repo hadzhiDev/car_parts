@@ -1,0 +1,25 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block usertools %}
+    <div id="currency-switcher" style="">
+        <select id="admin-currency-select">
+            <option value="USD">
+                USD
+            </option>
+            {% for c in admin_currencies %}
+                <option value="{{ c.currency_code }}"
+                    {% if c.selected %}selected{% endif %}>
+                    {{ c.currency_code }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {{ block.super }}
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="{% static 'admin/js/admin_currency.js' %}"></script>
+{% endblock %}

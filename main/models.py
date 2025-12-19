@@ -66,7 +66,7 @@ class Arrival(models.Model):
     date = models.DateField(verbose_name="Дата поступления")
     country_of_origin = models.ForeignKey(Country, on_delete=models.PROTECT, related_name='arrival_products', 
                                           verbose_name="Страна происхождения", null=True, blank=True)
-    comment = models.TextField(blank=True, null=True)
+    comment = models.CharField(max_length=500, verbose_name="Комментарий", null=True, blank=True)
 
     def __str__(self):
         return f"Arrival #{self.id} → {self.warehouse.name}"
@@ -95,7 +95,7 @@ class ArrivalProduct(models.Model):
     suits_for = models.CharField(max_length=200, verbose_name="Подходит для", null=True, blank=True,
                                  help_text="Укажите модели автомобилей, для которых подходит эта запчасть")
     
-    @property
+    @property 
     def total_cost(self):
         if self.quantity is None or self.cost_price is None:
             return None
