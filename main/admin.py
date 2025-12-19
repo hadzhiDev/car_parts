@@ -67,7 +67,7 @@ class ArrivalAdmin(admin.ModelAdmin):
     total_amount_converted.short_description = "Общая сумма"
 
     class Media:
-        js = ('admin/arrival_totals.js',)
+        js = ('admin/arrival_totals.js', "admin/js/inline_keyboard_nav.js")
 
 
 @admin.register(Product)
