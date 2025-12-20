@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from django.urls import path, reverse
 
 from .models import Warehouse, Country, Brand, Product, Arrival, ArrivalProduct, CurrencyRate
 from .utils import convert_from_usd
@@ -45,7 +44,6 @@ class ArrivalProductInline(admin.TabularInline):
     can_delete = False
 
     def row_total(self, obj):
-        print('obj.total_cost: ', obj.total_cost)
         return "—"
     row_total.short_description = "Итого"
 
@@ -56,7 +54,7 @@ class ArrivalProductInline(admin.TabularInline):
         }
 
 
-
+from django.contrib import messages
 @admin.register(Arrival)
 class ArrivalAdmin(admin.ModelAdmin):
     list_display = ('id', 'date', 'warehouse__name', 'country_of_origin', 'total_amount_converted', 'comment')

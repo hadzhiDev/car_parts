@@ -26,6 +26,7 @@ def arrivalproduct_pre_save(sender, instance, **kwargs):
 def arrivalproduct_post_save(sender, instance, created, **kwargs):
     product = Product.objects.filter(
         warehouse=instance.arrival.warehouse,
+        article_number=instance.article_number,
         brand=instance.brand,
         country_of_origin=instance.arrival.country_of_origin,
         name=instance.name, 
@@ -45,7 +46,7 @@ def arrivalproduct_post_save(sender, instance, created, **kwargs):
 
     delta = instance.quantity if created else instance.quantity - instance._old_quantity
 
-    product.article_number = instance.article_number if instance.article_number else product.article_number
+    # product.article_number = instance.article_number if instance.article_number else product.article_number
     product.quantity += delta
     product.cost_price = instance.cost_price
     product.save()
