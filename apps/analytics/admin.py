@@ -1,4 +1,3 @@
-# analytics/admin.py
 from django.urls import path
 from django.contrib import admin
 from .views import analytics_dashboard, sales_report, inventory_report, profit_report

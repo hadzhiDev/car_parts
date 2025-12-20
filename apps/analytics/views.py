@@ -15,12 +15,10 @@ from sales.models import Sale, SaleItem, Client, Payment
 def analytics_dashboard(request):
     """Main analytics dashboard"""
     
-    # Calculate time ranges
     today = timezone.now().date()
     two_weeks_ago = today - timedelta(days=14)
     thirty_days_ago = today - timedelta(days=30)
     
-    # Products not sold in 2 weeks
     recent_sales = SaleItem.objects.filter(
         sale__sale_date__gte=two_weeks_ago
     ).values_list('product_id', flat=True).distinct()
