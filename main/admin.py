@@ -1,12 +1,9 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+from django.urls import path, reverse
 
 from .models import Warehouse, Country, Brand, Product, Arrival, ArrivalProduct, CurrencyRate
 from .utils import convert_from_usd
-
-admin.site.site_header = "Административная панель AKG HYUNDAI"
-admin.site.site_title = "AKG HYUNDAI Admin Portal"
-admin.site.index_title = "Добро пожаловать в административную панель AKG HYUNDAI"
 
 
 @admin.register(ArrivalProduct)
@@ -52,6 +49,12 @@ class ArrivalProductInline(admin.TabularInline):
         return "—"
     row_total.short_description = "Итого"
 
+    class Media:
+        js = ("admin/js/inline_row_numbers.js",)
+        css = {
+            "all": ("admin/css/inline_row_numbers.css",)
+        }
+
 
 
 @admin.register(Arrival)
@@ -73,7 +76,7 @@ class ArrivalAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'article_number', 'brand__name', 'country_of_origin', 'warehouse',  
-                    'show_quantity', 'selling_price', 'suits_for')
+                    'show_quantity', 'cost_price', 'suits_for')
     list_display_links = ('name', 'article_number')
     search_fields = ('name', 'article_number')
     list_filter = ('warehouse__name', 'brand__name', 'country_of_origin__name')

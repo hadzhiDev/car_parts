@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
@@ -27,6 +27,7 @@ from main.models import CurrencyRate
 urlpatterns = [
     # path('admin/', lambda request: redirect('/admin/main/product/')),
     path('admin/', admin.site.urls),
+    # path('admin/', include('apps.analytics.urls')),
     path("set-admin-currency/", set_admin_currency, name="set_admin_currency"),
 ]
 

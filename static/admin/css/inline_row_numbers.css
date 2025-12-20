@@ -1,0 +1,26 @@
+/* SHOW original column as row number */
+.inline-related td.original {
+    display: table-cell !important;
+    width: 44px;
+    text-align: center;
+    font-weight: 600;
+    color: #aaa;
+    /* vertical-align: top; */
+    /* padding: 0 0 0 0;
+    width: 0; */
+}
+
+/* Header spacer (alignment fix) */
+.inline-related thead th:first-child {
+    width: 44px;
+}
+
+.inline-group .tabular tr td.original {
+    padding: 0 2px 0 2px;
+    width: 0;
+    vertical-align: middle;
+}
+
+/* .inline-group .tabular tr.has_original td {
+    padding-top: 0 !important; 
+} */

@@ -7,7 +7,7 @@ from .models import Product, ArrivalProduct
 def normalize_name(name: str) -> str:
     if not name:
         return ''
-    return ' '.join(name.strip().lower().split())
+    return ' '.join(name.strip().upper().split())
 
 
 @receiver(pre_save, sender=ArrivalProduct)
