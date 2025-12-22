@@ -1,4 +1,4 @@
-from main.models import CurrencyRate
+from apps.main.models import CurrencyRate
 
 def admin_currency(request):
     return {
