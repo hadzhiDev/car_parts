@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Sale, SaleItem, Client, Payment
-from main.utils import convert_from_usd
+from apps.main.utils import convert_from_usd
 
 
 class SaleItemInline(admin.TabularInline):

@@ -7,8 +7,8 @@ from django.db.models.functions import TruncMonth, TruncYear
 import json
 from decimal import Decimal
 
-from main.models import Product, Arrival, Warehouse, Brand, Country, ArrivalProduct
-from sales.models import Sale, SaleItem, Client, Payment
+from apps.main.models import Product, Arrival, Warehouse, Brand, Country, ArrivalProduct
+from apps.sales.models import Sale, SaleItem, Client, Payment
 
 
 @staff_member_required

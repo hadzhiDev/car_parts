@@ -43,11 +43,9 @@ def saleitem_post_delete(sender, instance, **kwargs):
     product = instance.product
     client = instance.sale.client
 
-    # 🔺 склад
     product.quantity += instance.quantity
     product.save()
 
-    # 🔺 баланс клиента
     client.balance -= instance.quantity * instance.sale_price
     client.save()
 

@@ -1,5 +1,5 @@
 from django.contrib.admin import AdminSite
-from main.models import CurrencyRate
+from apps.main.models import CurrencyRate
 
 class MyAdminSite(AdminSite):
     site_header = "Car Parts Admin"

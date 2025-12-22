@@ -29,13 +29,13 @@ def arrivalproduct_post_save(sender, instance, created, **kwargs):
         article_number=instance.article_number,
         brand=instance.brand,
         country_of_origin=instance.arrival.country_of_origin,
-        name=instance.name, 
+        name=instance.name,
     ).first()
 
     if not product:
         product = Product.objects.create(
             warehouse=instance.arrival.warehouse,
-            name=instance.name, 
+            name=instance.name,
             article_number=instance.article_number,
             brand=instance.brand,
             country_of_origin=instance.arrival.country_of_origin,
@@ -46,10 +46,10 @@ def arrivalproduct_post_save(sender, instance, created, **kwargs):
 
     delta = instance.quantity if created else instance.quantity - instance._old_quantity
 
-    # product.article_number = instance.article_number if instance.article_number else product.article_number
-    product.quantity += delta
+    product.quantity = max(0, product.quantity + delta)
     product.cost_price = instance.cost_price
     product.save()
+
 
 
 @receiver(post_delete, sender=ArrivalProduct)

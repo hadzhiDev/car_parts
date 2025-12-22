@@ -2,8 +2,8 @@ from django.apps import AppConfig
 
 
 class SaleConfig(AppConfig):
-    name = 'sales'
+    name = 'apps.sales'
     verbose_name = "Продажи"
 
     def ready(self):
-        import sales.signals  # noqa
+        import apps.sales.signals

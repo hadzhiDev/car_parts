@@ -2,8 +2,8 @@ from django.apps import AppConfig
 
 
 class MainConfig(AppConfig):
-    name = 'main'
+    name = 'apps.main'
     verbose_name = "Склады и товары"
 
     def ready(self):
-        import main.signals 
+        import apps.main.signals 

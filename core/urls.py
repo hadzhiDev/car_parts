@@ -20,8 +20,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
 
-from main.views import set_admin_currency
-from main.models import CurrencyRate
+from apps.main.views import set_admin_currency
+from apps.main.models import CurrencyRate
 
 
 urlpatterns = [

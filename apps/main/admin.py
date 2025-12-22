@@ -79,6 +79,9 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name', 'article_number')
     list_filter = ('warehouse__name', 'brand__name', 'country_of_origin__name')
 
+    # def has_delete_permission(self, request, obj = ...):
+    #     return False
+
     @admin.display(description='Количество')
     def show_quantity(self, obj):
         return f"{obj.quantity} шт."
