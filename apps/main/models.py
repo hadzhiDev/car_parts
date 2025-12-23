@@ -66,7 +66,7 @@ class Arrival(models.Model):
     )
     date = models.DateField(verbose_name="Дата поступления")
     country_of_origin = models.ForeignKey(Country, on_delete=models.PROTECT, related_name='arrival_products', 
-                                          verbose_name="Страна происхождения", null=True, blank=True)
+                                          verbose_name="Страна происхождения")
     comment = models.CharField(max_length=500, verbose_name="Комментарий", null=True, blank=True)
 
     def __str__(self):
