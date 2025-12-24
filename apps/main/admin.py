@@ -12,6 +12,17 @@ class ArrivalProductAdmin(admin.ModelAdmin):
     list_display_links = ('name', 'article_number')
     search_fields = ('name', 'article_number')
     list_filter = ('arrival__date', 'brand__name')
+    autocomplete_fields = ('arrival', 'brand')
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return (
+                "name",
+                "article_number",
+                "brand",
+                "arrival",
+            )
+        return () 
 
     def cost_price_converted(self, obj):
         return convert_from_usd(obj.cost_price)
@@ -52,6 +63,21 @@ class ArrivalProductInline(admin.TabularInline):
         css = {
             "all": ("admin/css/inline_row_numbers.css",)
         }
+    
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+
+        class ReadOnlyFormSet(formset):
+            def __init__(self, *args, **inner_kwargs):
+                super().__init__(*args, **inner_kwargs)
+
+                for form in self.forms:
+                    if form.instance.pk:
+                        for field in ["name", "article_number", "brand", "arrival", 'row_total']:
+                            if field in form.fields:
+                                form.fields[field].disabled = True
+
+        return ReadOnlyFormSet
 
 
 from django.contrib import messages
@@ -60,7 +86,7 @@ class ArrivalAdmin(admin.ModelAdmin):
     list_display = ('id', 'date', 'warehouse__name', 'country_of_origin', 'total_amount_converted', 'comment')
     list_display_links = ('id', 'date')
     list_filter = ('warehouse__name', 'date')
-    search_fields = ('id', 'warehouse__name')
+    search_fields = ('id', 'warehouse__name', 'date')
     inlines = [ArrivalProductInline]
 
     def total_amount_converted(self, obj):
@@ -83,7 +109,7 @@ class ProductAdmin(admin.ModelAdmin):
     #     return False
 
     @admin.display(description='Количество')
-    def show_quantity(self, obj):
+    def show_quantity(self, obj): 
         return f"{obj.quantity} шт."
 
 

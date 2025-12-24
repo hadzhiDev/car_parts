@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Warehouse(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, verbose_name='Название склада')
 
     def __str__(self):
         return self.name
@@ -70,7 +70,7 @@ class Arrival(models.Model):
     comment = models.CharField(max_length=500, verbose_name="Комментарий", null=True, blank=True)
 
     def __str__(self):
-        return f"Arrival #{self.id} → {self.warehouse.name}"
+        return f"Поступление #{self.date} → {self.warehouse.name}"
     
     @property
     def total_amount(self):
@@ -84,7 +84,7 @@ class Arrival(models.Model):
 
 class ArrivalProduct(models.Model):
     arrival = models.ForeignKey(
-        Arrival, on_delete=models.PROTECT, related_name='items'
+        Arrival, on_delete=models.PROTECT, related_name='items', verbose_name='Поступление'
     )
     name = models.CharField(max_length=100, verbose_name="Название")
     article_number = models.CharField(max_length=50, verbose_name="Артикул", null=True, blank=True)
