@@ -104,11 +104,16 @@ class ArrivalAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'article_number', 'brand__name', 'country_of_origin', 'warehouse',  
-                    'show_quantity', 'sold_quantity', 'cost_price', 'suits_for')
+                    'show_quantity', 'sold_quantity', 'cost_price_converted', 'suits_for')
     list_display_links = ('name', 'article_number')
     search_fields = ('name', 'article_number')
     list_filter = ('warehouse__name', 'brand__name', 'country_of_origin__name', SoldQuantityFilter,
                    SalePeriodFilter)
+    
+    def cost_price_converted(self, obj):
+        return convert_from_usd(obj.cost_price)
+    cost_price_converted.short_description = "Себестоимость"
+    
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
