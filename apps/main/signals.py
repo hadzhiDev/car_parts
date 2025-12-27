@@ -57,6 +57,7 @@ def arrivalproduct_post_delete(sender, instance, **kwargs):
     try:
         product = Product.objects.get(
             warehouse=instance.arrival.warehouse,
+            article_number=instance.article_number,
             name=instance.name,  
             brand=instance.brand,
             country_of_origin=instance.arrival.country_of_origin,

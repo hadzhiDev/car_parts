@@ -60,7 +60,7 @@ class Product(models.Model):
                                  help_text="Укажите модели автомобилей, для которых подходит эта запчасть")
 
     def __str__(self):
-        return f"{self.name} ({self.quantity}) В {self.warehouse.name}"
+        return f"{self.name} ({self.quantity} шт) В {self.warehouse.name}"
     
     class Meta:
         verbose_name = "Товар"
@@ -70,7 +70,7 @@ class Product(models.Model):
 
 class Arrival(models.Model):
     warehouse = models.ForeignKey(
-        Warehouse, on_delete=models.PROTECT, related_name='arrivals'
+        Warehouse, on_delete=models.PROTECT, related_name='arrivals', verbose_name='Склад'
     )
     date = models.DateField(verbose_name="Дата поступления")
     country_of_origin = models.ForeignKey(Country, on_delete=models.PROTECT, related_name='arrival_products', 
