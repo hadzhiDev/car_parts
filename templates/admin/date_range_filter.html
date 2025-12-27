@@ -1,0 +1,29 @@
+<div class="date-range-filter">
+    <h3>Дата продажи</h3>
+
+    <form method="get">
+        {% for key, value in request.GET.items %}
+            {% if key != 'start_date' and key != 'end_date' %}
+                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endif %}
+        {% endfor %}
+
+        <label>
+            C:
+            <input type="date" name="start_date"
+                   value="{{ request.GET.start_date }}">
+        </label>
+
+        <br>
+
+        <label>
+            По:
+            <input type="date" name="end_date"
+                   value="{{ request.GET.end_date }}">
+        </label>
+
+        <br><br>
+
+        <button class="button">Фильтровать</button>
+    </form>
+</div>

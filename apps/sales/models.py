@@ -16,7 +16,7 @@ class Sale(models.Model):
     class Meta:
         verbose_name = "Продажа"
         verbose_name_plural = "Продажи"
-
+ 
 
 class SaleItem(models.Model):
     sale = models.ForeignKey(Sale, on_delete=models.PROTECT, related_name='items', verbose_name="Продажа")

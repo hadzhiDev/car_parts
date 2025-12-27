@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'apps.main',
     'apps.sales',
     'apps.analytics',
+
+    'rangefilter',
 ]
 
 MIDDLEWARE = [

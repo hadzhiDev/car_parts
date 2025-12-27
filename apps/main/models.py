@@ -4,6 +4,14 @@ from django.db import models
 class Warehouse(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название склада')
 
+    @property
+    def total_products_type(self):
+        return self.products.count()
+    
+    @property
+    def total_quantity_of_goods(self):
+        return sum(product.quantity for product in self.products.all())
+
     def __str__(self):
         return self.name
     
@@ -57,7 +65,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
-        ordering = ('name',)
+        # ordering = ('name',)
 
 
 class Arrival(models.Model):
@@ -111,18 +119,25 @@ class ArrivalProduct(models.Model):
 
 
 class CurrencyRate(models.Model):
-    currency_code = models.CharField(max_length=3, unique=True, verbose_name="Код валюты")
-    rate_to_usd = models.DecimalField(max_digits=10, decimal_places=10, verbose_name="Курс к USD")
-    last_updated = models.DateTimeField(auto_now=True, verbose_name="Последнее обновление")
-    selected = models.BooleanField(default=False, verbose_name="Выбранная валюта для админки")
+    currency_code = models.CharField(
+        max_length=3, unique=True, verbose_name="Код валюты"
+    )
+    rate_to_usd = models.DecimalField(
+        max_digits=10,
+        decimal_places=4,
+        verbose_name="Сколько стоит 1 USD в этой валюте"
+    )
+    last_updated = models.DateTimeField(auto_now=True)
+    selected = models.BooleanField(default=False)
 
     def clean(self):
         if self.selected:
             CurrencyRate.objects.exclude(pk=self.pk).update(selected=False)
-        return super().clean()
+        super().clean()
 
     def __str__(self):
-        return f"{self.currency_code}: {self.rate_to_usd}"
+        return f"1 USD = {self.rate_to_usd} {self.currency_code}"
+
     
     class Meta:
         verbose_name = "Курс валюты"
