@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.utils import timezone
-from django.db.models import Sum, Q
+from django.db.models import Sum, F, Q, DecimalField, ExpressionWrapper
+
 from django.http import HttpResponse
 from django.utils.timezone import now
 from datetime import timedelta
@@ -130,10 +131,10 @@ def export_warehouse_stock_to_excel(modeladmin, request, queryset):
     )
 
     # ================= WAREHOUSE INFO =================
-    warehouse_ids = request.GET.getlist('warehouse__id__exact')
+    warehouse_ids = request.GET.get('warehouse__name')
+    print(warehouse_ids, 'edcedc', request.GET, )
     if warehouse_ids:
-        warehouses = queryset.values_list('warehouse__name', flat=True).distinct()
-        warehouse_text = ", ".join(warehouses)
+        warehouse_text = warehouse_ids
     else:
         warehouse_text = "Все склады"
 
@@ -143,6 +144,15 @@ def export_warehouse_stock_to_excel(modeladmin, request, queryset):
     # ================= TOTALS =================
     total_positions = queryset.count()
     total_quantity = sum(p.quantity for p in queryset)
+
+    total_cost_amount = queryset.aggregate(
+        total=Sum(
+            ExpressionWrapper(
+                F('quantity') * F('cost_price'),
+                output_field=DecimalField(max_digits=15, decimal_places=2)
+            )
+        )
+    )['total'] or 0
 
     # ================= TOP INFO =================
     ws.merge_cells('A1:H1')
@@ -159,6 +169,14 @@ def export_warehouse_stock_to_excel(modeladmin, request, queryset):
     ws['A3'] = f"Всего позиций: {total_positions} | Общее количество: {total_quantity}"
     ws['A3'].font = bold
     ws['A3'].alignment = left
+
+    ws.merge_cells('A4:H4')
+    ws['A4'] = (
+        f"Общая себестоимость: {total_cost_amount:.2f} | "
+    )
+    ws['A4'].font = bold
+    ws['A4'].alignment = left
+
 
     # ================= HEADERS =================
     headers = [
