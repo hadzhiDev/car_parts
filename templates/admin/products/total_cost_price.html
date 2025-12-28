@@ -1,0 +1,32 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>💰 Общая себестоимость выбранных товаров</h1>
+
+<h2>💰 Итого: {{ total_cost }}</h2>
+
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>Товар</th>
+            <th>Склад</th>
+            <th>Количество</th>
+            <th>Себестоимость</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in products %}
+        <tr>
+            <td>{{ p.name }}</td>
+            <td>{{ p.warehouse.name }}</td>
+            <td>{{ p.quantity }}</td>
+            <td>{{ p.cost_price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+<a href="javascript:history.back()">⬅ Назад</a>
+{% endblock %}

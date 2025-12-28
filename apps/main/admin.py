@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.db.models import Sum, F, Q, DecimalField, ExpressionWrapper
+from django.shortcuts import render
 
 from django.http import HttpResponse
 from django.utils.timezone import now
@@ -242,6 +243,33 @@ def export_warehouse_stock_to_excel(modeladmin, request, queryset):
 
 
 
+@admin.action(description="💰 Показать общую себестоимость")
+def show_total_cost_price(modeladmin, request, queryset):
+
+    total_cost = queryset.aggregate(
+        total=Sum(
+            ExpressionWrapper(
+                F('quantity') * F('cost_price'),
+                output_field=DecimalField(max_digits=15, decimal_places=2)
+            )
+        )
+    )['total'] or 0
+
+    context = {
+        'products': queryset.select_related('warehouse', 'brand'),
+        'total_cost': convert_from_usd(total_cost),
+    }
+
+    return render(
+        request,
+        'admin/products/total_cost_price.html',
+        context
+    )
+
+
+
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'article_number', 'brand__name', 'country_of_origin', 'warehouse',  
@@ -250,7 +278,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name', 'article_number')
     list_filter = ('warehouse__name', 'brand__name', 'country_of_origin__name', SoldQuantityFilter,
                    SalePeriodFilter)
-    actions = (export_warehouse_stock_to_excel,)
+    actions = (export_warehouse_stock_to_excel, show_total_cost_price)
     
     def cost_price_converted(self, obj):
         return convert_from_usd(obj.cost_price)
