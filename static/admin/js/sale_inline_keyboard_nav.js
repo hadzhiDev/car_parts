@@ -1,16 +1,16 @@
-function isAutocompleteTarget(target) {
+function isSaleAutocompleteTarget(target) {
     return (
         target.classList.contains("select2-selection") ||
         target.closest(".select2-container")
     );
 }
 
-function isSelect2Open(target) {
+function isSaleSelect2Open(target) {
     const container = target.closest(".select2-container");
     return container?.classList.contains("select2-container--open");
 }
 
-function isInsideInline(target) {
+function isInsideSaleInline(target) {
     return target.closest("tr.form-row");
 }
 
@@ -19,8 +19,8 @@ document.addEventListener("keydown", (e) => {
 
     if (e.key === "Enter") {
         if (
-            isInsideInline(e.target) &&
-            !isSelect2Open(e.target)
+            isInsideSaleInline(e.target) &&
+            !isSaleSelect2Open(e.target)
         ) {
             e.preventDefault();
 
@@ -39,7 +39,7 @@ document.addEventListener("keydown", (e) => {
 
     if (
         !target.matches("input, textarea") &&
-        !isAutocompleteTarget(target)
+        !isSaleAutocompleteTarget(target)
     ) {
         return;
     }
@@ -89,19 +89,17 @@ document.addEventListener("keydown", (e) => {
 });
 
 
-
 document.addEventListener("formset:added", (e) => {
     const row = e.target;
-
     if (!row || !row.classList.contains("form-row")) return;
 
-    // Focus name field
-    const nameInput = row.querySelector(
-        'input[name$="-name"]'
+    const quantityInput = row.querySelector(
+        'input[name$="-quantity"]'
     );
 
-    if (nameInput && !nameInput.disabled) {
-        nameInput.focus();
-        nameInput.select?.();
+    if (quantityInput && !quantityInput.disabled) {
+        quantityInput.focus();
+        quantityInput.select?.();
     }
 });
+

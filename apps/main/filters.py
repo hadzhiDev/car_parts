@@ -1,11 +1,5 @@
 from django.contrib.admin import SimpleListFilter
-from django.utils import timezone
-from datetime import timedelta
-from django.db.models import Sum, Q
 
-
-
-from django.contrib.admin import SimpleListFilter
 
 class SoldQuantityFilter(SimpleListFilter):
     title = "Продажи"
@@ -33,9 +27,6 @@ class SoldQuantityFilter(SimpleListFilter):
         return queryset
 
 
-from django.utils import timezone
-from datetime import timedelta
-
 class SalePeriodFilter(SimpleListFilter):
     title = "Период продаж"
     parameter_name = "period"
@@ -49,4 +40,4 @@ class SalePeriodFilter(SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
-        return queryset  # 🔥 DO NOTHING HERE
+        return queryset 

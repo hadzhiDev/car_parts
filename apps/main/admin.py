@@ -3,7 +3,6 @@ from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.db.models import Sum, F, Q, DecimalField, ExpressionWrapper
 from django.shortcuts import render
-
 from django.http import HttpResponse
 from django.utils.timezone import now
 from datetime import timedelta
@@ -54,6 +53,7 @@ class ArrivalProductInline(admin.TabularInline):
     extra = 5
     
     fields = (
+        'product',
         'name',
         'article_number',
         'quantity',
@@ -63,7 +63,7 @@ class ArrivalProductInline(admin.TabularInline):
         'suits_for',
     )
     readonly_fields = ('row_total',)
-    autocomplete_fields = ('brand',)
+    autocomplete_fields = ('product', 'brand',)
     can_delete = False
 
     def row_total(self, obj):
@@ -92,7 +92,6 @@ class ArrivalProductInline(admin.TabularInline):
         return ReadOnlyFormSet
 
 
-from django.contrib import messages
 @admin.register(Arrival)
 class ArrivalAdmin(admin.ModelAdmin):
     list_display = ('id', 'date', 'warehouse__name', 'country_of_origin', 'total_amount_converted', 'comment')
@@ -106,7 +105,11 @@ class ArrivalAdmin(admin.ModelAdmin):
     total_amount_converted.short_description = "Общая сумма"
 
     class Media:
-        js = ('admin/arrival_totals.js', "admin/js/inline_keyboard_nav.js")
+        js = (
+            'admin/js/arrival_totals.js', 
+            "admin/js/inline_keyboard_nav.js",
+            "admin/js/arrival_product_autofill.js",
+        )
 
 
 @admin.action(description='Экспорт остатков склада в Excel')
@@ -178,7 +181,6 @@ def export_warehouse_stock_to_excel(modeladmin, request, queryset):
     ws['A4'].font = bold
     ws['A4'].alignment = left
 
-
     # ================= HEADERS =================
     headers = [
         "Товар",
@@ -242,7 +244,6 @@ def export_warehouse_stock_to_excel(modeladmin, request, queryset):
     return response
 
 
-
 @admin.action(description="💰 Показать общую себестоимость")
 def show_total_cost_price(modeladmin, request, queryset):
 
@@ -267,22 +268,37 @@ def show_total_cost_price(modeladmin, request, queryset):
     )
 
 
-
-
-
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'article_number', 'brand__name', 'country_of_origin', 'warehouse',  
                     'show_quantity', 'sold_quantity', 'cost_price_converted', 'suits_for')
     list_display_links = ('name', 'article_number')
     search_fields = ('name', 'article_number')
-    list_filter = ('warehouse__name', 'brand__name', 'country_of_origin__name', SoldQuantityFilter,
-                   SalePeriodFilter)
+    list_filter = ('warehouse__name', 'country_of_origin__name', SoldQuantityFilter,
+                   SalePeriodFilter, 'brand__name',)
     actions = (export_warehouse_stock_to_excel, show_total_cost_price)
     
     def cost_price_converted(self, obj):
         return convert_from_usd(obj.cost_price)
     cost_price_converted.short_description = "Себестоимость"
+
+    # def get_search_results(self, request, queryset, search_term):
+    #     queryset, use_distinct = super().get_search_results(
+    #         request, queryset, search_term
+    #     )
+
+    #     results = []
+    #     for p in queryset:
+    #         print(p, 'product in search', p.id )
+    #         results.append({
+    #             "id": p.id,
+    #             "text": str(p),
+    #             "article_number": p.article_number,
+    #             "cost_price": str(p.cost_price or ""),
+    #             "brand_id": p.brand_id,
+    #         })
+    #     print(results, 'search results')
+    #     return results, use_distinct
     
 
     def get_queryset(self, request):

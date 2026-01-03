@@ -37,7 +37,6 @@ def saleitem_post_save(sender, instance, created, **kwargs):
     client.save()
 
 
-
 @receiver(post_delete, sender=SaleItem)
 def saleitem_post_delete(sender, instance, **kwargs):
     product = instance.product

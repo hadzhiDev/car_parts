@@ -2,12 +2,7 @@ from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 
 from .models import Product, ArrivalProduct
-
-
-def normalize_name(name: str) -> str:
-    if not name:
-        return ''
-    return ' '.join(name.strip().upper().split())
+from .utils import normalize_name
 
 
 @receiver(pre_save, sender=ArrivalProduct)
@@ -49,7 +44,6 @@ def arrivalproduct_post_save(sender, instance, created, **kwargs):
     product.quantity = max(0, product.quantity + delta)
     product.cost_price = instance.cost_price
     product.save()
-
 
 
 @receiver(post_delete, sender=ArrivalProduct)

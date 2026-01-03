@@ -60,7 +60,7 @@ class Product(models.Model):
                                  help_text="Укажите модели автомобилей, для которых подходит эта запчасть")
 
     def __str__(self):
-        return f"{self.name} ({self.quantity} шт) В {self.warehouse.name}"
+        return f"{self.name} ({self.quantity} шт) В {self.warehouse.name}, Себсть: {self.cost_price}"
     
     class Meta:
         verbose_name = "Товар"
@@ -93,6 +93,13 @@ class Arrival(models.Model):
 class ArrivalProduct(models.Model):
     arrival = models.ForeignKey(
         Arrival, on_delete=models.PROTECT, related_name='items', verbose_name='Поступление'
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        verbose_name="Выбрать товар"
     )
     name = models.CharField(max_length=100, verbose_name="Название")
     article_number = models.CharField(max_length=50, verbose_name="Артикул", null=True, blank=True)

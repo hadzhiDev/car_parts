@@ -20,15 +20,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
 
-from apps.main.views import set_admin_currency
-from apps.main.models import CurrencyRate
+from apps.main.views import set_admin_currency, product_autofill
 
 
 urlpatterns = [
     # path('admin/', lambda request: redirect('/admin/main/product/')),
     path('admin/', admin.site.urls),
-    # path('admin/', include('apps.analytics.urls')),
     path("set-admin-currency/", set_admin_currency, name="set_admin_currency"),
+    path("product-autofill/<int:pk>/", product_autofill, name="product_autofill"),
 ]
 
 if settings.DEBUG:

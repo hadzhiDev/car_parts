@@ -1,35 +1,13 @@
 from django.contrib import admin
 from django.http import HttpResponse
-from django.utils.dateparse import parse_date
-from rangefilter.filters import DateTimeRangeFilter, DateRangeFilterBuilder
+from rangefilter.filters import DateRangeFilterBuilder
 
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
-from datetime import datetime
 
 from .models import Sale, SaleItem, Client, Payment
-from apps.main.utils import convert_from_usd
-
-
-def parse_admin_date(value):
-    """
-    Supports:
-    - YYYY-MM-DD (ISO)
-    - DD.MM.YYYY (admin UI)
-    """
-    if not value:
-        return None
-
-    date = parse_date(value)
-    if date:
-        return date
-
-    try:
-        return datetime.strptime(value, '%d.%m.%Y').date()
-    except ValueError:
-        return None
-
+from apps.main.utils import convert_from_usd, parse_admin_date
 
 
 @admin.action(description='Экспорт выбранных товаров продажи в Excel')
@@ -88,7 +66,7 @@ def export_sale_items_to_excel(modeladmin, request, queryset):
         "Сумма",
     ]
 
-    ws.append([])  # empty row
+    ws.append([])
     ws.append(headers)
 
     header_row = ws.max_row
@@ -139,8 +117,6 @@ def export_sale_items_to_excel(modeladmin, request, queryset):
     return response
 
 
-
-
 class SaleItemInline(admin.TabularInline):
     model = SaleItem
     extra = 1
@@ -172,7 +148,10 @@ class SaleAdmin(admin.ModelAdmin):
         return convert_from_usd(obj.total_amount)
     
     class Media:
-        js = ('admin/inline_totals.js',)
+        js = (
+            'admin/js/inline_totals.js',
+            'admin/js/sale_inline_keyboard_nav.js',
+        )
 
 
 @admin.register(SaleItem)

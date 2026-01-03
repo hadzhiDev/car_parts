@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from decouple import config
 from pathlib import Path
-import json, os
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.main',
     'apps.sales',
-    'apps.analytics',
 
     'rangefilter',
 ]
