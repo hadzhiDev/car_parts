@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 class Sale(models.Model):
     sale_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата продажи")
     client = models.ForeignKey('sales.Client', on_delete=models.PROTECT, related_name='purchases', verbose_name="Клиент")
-    warehouse = models.ForeignKey('main.Warehouse', on_delete=models.PROTECT, related_name='purchases', verbose_name='Продажа из склада')
+    # warehouse = models.ForeignKey('main.Warehouse', on_delete=models.PROTECT, related_name='purchases', verbose_name='Продажа из склада')
 
     @property
     def total_amount(self):
@@ -41,8 +41,8 @@ class SaleItem(models.Model):
         if self.product.quantity < delta:
             raise ValidationError("Недостаточно товара на складе")
         
-        if self.sale.warehouse != self.product.warehouse:
-            raise ValidationError(f"Данный товар не из склада {self.sale.warehouse}")
+        # if self.sale.warehouse != self.product.warehouse:
+        #     raise ValidationError(f"Данный товар не из склада {self.sale.warehouse}")
 
 
     def __str__(self):
