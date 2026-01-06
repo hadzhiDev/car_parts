@@ -1,8 +1,4 @@
-console.log("arrival autofill loaded");
-
 $(document).on("select2:select", "select", function (e) {
-    console.log("product selected");
-
     const select = e.target;
 
     if (!select.name || !select.name.endsWith("-product")) return;
@@ -26,8 +22,6 @@ $(document).on("select2:select", "select", function (e) {
             if (cost) cost.value = data.cost_price || "";
             
             if (brand && data.brand_id) {
-                console.log("Autofilled data:", data);
-
                 const option = new Option(
                     data.brand_name,   // text
                     data.brand_id,     // value

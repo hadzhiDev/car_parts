@@ -141,7 +141,7 @@ class SaleAdmin(admin.ModelAdmin):
     list_filter = ('sale_date', 'client__full_name')
     search_fields = ('id', 'client__full_name')
     inlines = [SaleItemInline]
-    autocomplete_fields = ('client',)
+    autocomplete_fields = ('client', 'warehouse')
 
     @admin.display(description='Общая сумма')
     def total_amount(self, obj):
@@ -151,6 +151,7 @@ class SaleAdmin(admin.ModelAdmin):
         js = (
             'admin/js/inline_totals.js',
             'admin/js/sale_inline_keyboard_nav.js',
+            "admin/js/sale_product_autofill.js",
         )
 
 
