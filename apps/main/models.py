@@ -60,7 +60,7 @@ class Product(models.Model):
                                  help_text="Укажите модели автомобилей, для которых подходит эта запчасть")
 
     def __str__(self):
-        return f"{self.name} ({self.quantity} шт) В {self.warehouse.name}, Себсть: {self.cost_price}"
+        return f"{self.name} арт: ({self.article_number}) ({self.quantity} шт) В {self.warehouse.name}, Себсть: {self.cost_price}"
     
     class Meta:
         verbose_name = "Товар"

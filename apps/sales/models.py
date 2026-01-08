@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 
 
 class Sale(models.Model):
-    sale_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата продажи")
+    sale_date = models.DateTimeField(verbose_name="Дата продажи")
     client = models.ForeignKey('sales.Client', on_delete=models.PROTECT, related_name='purchases', verbose_name="Клиент")
     # warehouse = models.ForeignKey('main.Warehouse', on_delete=models.PROTECT, related_name='purchases', verbose_name='Продажа из склада')
 
@@ -24,6 +24,7 @@ class SaleItem(models.Model):
     product = models.ForeignKey('main.Product', on_delete=models.PROTECT, related_name='sale_items', verbose_name="Товар")
     quantity = models.PositiveIntegerField(verbose_name="Количество")
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена продажи")
+    article_number = models.CharField(max_length=50, verbose_name="Артикул", null=True, blank=True)
 
     @property
     def total_cost(self): 
@@ -46,7 +47,7 @@ class SaleItem(models.Model):
 
 
     def __str__(self):
-        return f"{self.quantity} x {self.product.name} в продаже {self.sale.id}"
+        return f"{self.quantity} x {self.product.name} в продаже {self.sale.sale_date.strftime('%Y-%m-%d')}"
     
     class Meta:
         verbose_name = "Товар продажи"

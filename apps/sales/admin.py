@@ -122,8 +122,10 @@ class SaleItemInline(admin.TabularInline):
     extra = 1
     autocomplete_fields = ('product',)
     readonly_fields = ('row_total',)
+    can_delete = False
     fields = (
         'product',
+        'article_number',
         'quantity',
         'sale_price',
         'row_total',
@@ -132,6 +134,27 @@ class SaleItemInline(admin.TabularInline):
         print('obj.total_cost: ', obj.total_cost)
         return "—"
     row_total.short_description = "Итого"
+
+    class Media:
+        js = ("admin/js/inline_row_numbers.js",)
+        css = {
+            "all": ("admin/css/inline_row_numbers.css",)
+        }
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+
+        class ReadOnlyFormSet(formset):
+            def __init__(self, *args, **inner_kwargs):
+                super().__init__(*args, **inner_kwargs)
+
+                for form in self.forms:
+                    if form.instance.pk:
+                        for field in ["product", "article_number", "quantity", "sale_price", 'row_total']:
+                            if field in form.fields:
+                                form.fields[field].disabled = True
+
+        return ReadOnlyFormSet
 
  
 @admin.register(Sale)
