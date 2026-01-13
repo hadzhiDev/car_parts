@@ -302,7 +302,7 @@ class ProductAdmin(admin.ModelAdmin):
     
 
     def get_queryset(self, request):
-        qs = super().get_queryset(request).filter(quantity__gt=0)
+        qs = super().get_queryset(request)
 
         period = request.GET.get('period')
         now = timezone.now()
