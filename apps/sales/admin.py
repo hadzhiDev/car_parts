@@ -182,7 +182,7 @@ class SaleAdmin(admin.ModelAdmin):
 class SaleItemAdmin(admin.ModelAdmin):
     list_display = ('sale__id', 'product__name', 'show_quantity', 'sale_price_converted', 'total_cost', 'sale_date')
     list_display_links = ('sale__id', 'product__name')
-    search_fields = ('sale__id', 'product__name')
+    search_fields = ('sale__id', 'product__name', 'product__article_number')
     list_filter = (('sale__sale_date', DateRangeFilterBuilder()),  'product__brand__name')
     actions = (export_sale_items_to_excel,)
 
